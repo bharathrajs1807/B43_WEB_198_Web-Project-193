@@ -1,0 +1,30 @@
+{
+  "name": "b43_web_198_web-project-193",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bharathrajs1807/B43_WEB_198_Web-Project-193.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bharathrajs1807/B43_WEB_198_Web-Project-193/issues"
+  },
+  "homepage": "https://github.com/bharathrajs1807/B43_WEB_198_Web-Project-193#readme",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.12.1",
+    "socket.io": "^4.8.1"
+  }
+}
