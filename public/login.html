@@ -51,6 +51,7 @@
             const result = await response.json();
             alert(result.message);
             if (response.status === 200) {
+                localStorage.setItem("username", result.username);
                 localStorage.setItem("accessToken", result.accessToken);
                 localStorage.setItem("refreshToken", result.refreshToken);
                 window.location.href = "wall.html";

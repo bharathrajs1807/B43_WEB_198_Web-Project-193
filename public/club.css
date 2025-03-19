@@ -59,9 +59,30 @@ body {
     background-color: #c9302c;
 }
 
-.wall-container {
+.club-container {
     max-width: 50rem;
     margin: 1.25rem auto;
+    padding: 1.25rem;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.25rem;
+}
+
+.club-info h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #007BFF;
+    margin-bottom: 1rem;
+}
+
+.club-info p {
+    margin-bottom: 0.5rem;
+}
+
+.wall-container {
+    max-width: 50rem;
+    margin: 0 auto;
     padding: 1.25rem;
     background-color: white;
     border-radius: 0.5rem;
@@ -125,6 +146,7 @@ button:hover {
 }
 
 @media (max-width: 48rem) {
+    .club-container,
     .wall-container {
         width: 90%;
     }
