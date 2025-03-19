@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Log In</h1>
+        <form id="loginForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="loginEmail">Email:</label>
+                    <input type="email" id="loginEmail" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password:</label>
+                    <input type="password" id="loginPassword" placeholder="Password" required>
+                </div>
+            </div>
+            <button type="submit">Log In</button>
+        </form>
+    </div>
+</body>
+
+</html>
+
+<script>
+    document.getElementById("loginForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const email = document.getElementById("loginEmail").value;
+        const password = document.getElementById("loginPassword").value;
+
+        const data = {
+            email,
+            password
+        };
+        console.log(data)
+
+        try {
+            const response = await fetch("http://localhost:8090/log-in", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            alert(result.message);
+            if (response.status === 200) {
+                localStorage.setItem("accessToken", result.accessToken);
+                localStorage.setItem("refreshToken", result.refreshToken);
+                window.location.href = "wall.html";
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    });
+</script>

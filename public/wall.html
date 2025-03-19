@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wall</title>
+    <link rel="stylesheet" href="wall.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="logo">
+                <img src="./Images/ClubNexus.png" alt="Logo" class="logo-img">
+            </div>
+
+            <div class="user-actions">
+                <span id="username">Username</span>
+                <button id="logoutBtn" class="logout-button">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wall-container">
+        <section class="create-post">
+            <textarea id="postContent" placeholder="What's on your mind?" rows="4"></textarea>
+            <button id="postBtn">Post</button>
+        </section>
+
+        <section class="posts-container" id="postsContainer">
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
