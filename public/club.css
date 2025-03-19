@@ -1,0 +1,157 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    font-size: 1rem;
+}
+
+.navbar {
+    background-color: #007BFF;
+    padding: 0.5rem;
+    color: white;
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo-img {
+    height: 3.75rem;
+    width: auto;
+}
+
+.user-actions {
+    display: flex;
+    align-items: baseline;
+}
+
+#username {
+    font-size: 1.125rem;
+    font-weight: bold;
+    margin-right: 1.25rem;
+}
+
+.logout-button {
+    background-color: #d9534f;
+    color: white;
+    border: none;
+    padding: 0.625rem 0.9375rem;
+    cursor: pointer;
+    border-radius: 1rem;
+    font-size: 1rem;
+}
+
+.logout-button:hover {
+    background-color: #c9302c;
+}
+
+.club-container {
+    max-width: 50rem;
+    margin: 1.25rem auto;
+    padding: 1.25rem;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.25rem;
+}
+
+.club-info h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #007BFF;
+    margin-bottom: 1rem;
+}
+
+.club-info p {
+    margin-bottom: 0.5rem;
+}
+
+.wall-container {
+    max-width: 50rem;
+    margin: 0 auto;
+    padding: 1.25rem;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+}
+
+.create-post {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.875rem;
+}
+
+.create-post textarea {
+    width: 100%;
+    padding: 0.675rem;
+    font-size: 1rem;
+    text-indent: 0.5rem;
+    border-radius: 0.25rem;
+    border: 1px solid #ddd;
+    resize: vertical;
+}
+
+button {
+    padding: 0.75rem 1.25rem;
+    border: none;
+    background-color: #007BFF;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 0.25rem;
+    width: 100%;
+    margin-top: 0.625rem;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.posts-container {
+    margin-top: 1.25rem;
+}
+
+.post {
+    background-color: #f9f9f9;
+    padding: 0.9375rem;
+    margin-bottom: 0.9375rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+}
+
+.post .username {
+    font-weight: bold;
+    color: #007BFF;
+}
+
+.post .content {
+    margin-top: 0.625rem;
+    font-size: 1rem;
+    color: #555;
+}
+
+@media (max-width: 48rem) {
+    .club-container,
+    .wall-container {
+        width: 90%;
+    }
+
+    button {
+        width: 100%;
+    }
+}
