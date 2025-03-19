@@ -41,6 +41,10 @@ const ProfileSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+    followings: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "User"
+    },
     posts: {
         type: [mongoose.Schema.Types.ObjectId],
         ref: "Post"

@@ -1,10 +1,11 @@
 const mongoose = require("mongoose");
 
 const ClubSchema = mongoose.Schema({
-    name: {
+    clubname: {
         type: String,
         minlength: [3, "Club name has to be minimum 3 characters long."],
-        required: true
+        required: true,
+        unique: true
     },
     type: {
         type: String,

@@ -4,7 +4,7 @@ require("dotenv").config();
 const ACCESS_TOKEN_SECRET_KEY = process.env.ACCESS_TOKEN_SECRET_KEY;
 
 const authMiddleware = function(req, res, next){
-    const tokenWithBearer = req.headers['authorization'];
+    const tokenWithBearer = req.headers["authorization"];
     if(!tokenWithBearer){
         return res.status(400).json({message: "No authorization token provided."});
     }

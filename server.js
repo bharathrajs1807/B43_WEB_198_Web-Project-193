@@ -9,9 +9,15 @@ const cors = require("cors");
 require("dotenv").config();
 
 const connection = require("./config/db.js");
+const UserRouter = require("./routes/user.route.js");
+const ProfileRouter = require("./routes/profile.route.js");
+const ClubRouter = require("./routes/club.route.js");
+const PostRouter = require("./routes/post.route.js");
 const authMiddleware = require("./middlewares/authMiddleware.js");
 const User = require("./models/user.model.js");
 const Profile = require("./models/profile.model.js");
+const Club = require("./models/club.model.js");
+const Post = require("./models/post.model.js");
 
 const PORT = process.env.PORT;
 const ACCESS_TOKEN_SECRET_KEY = process.env.ACCESS_TOKEN_SECRET_KEY;
@@ -24,13 +30,18 @@ const io = new Server(server);
 app.use(express.json());
 app.use(cors());
 
+app.use("/user", UserRouter);
+app.use("/profile", ProfileRouter);
+app.use("/club", ClubRouter);
+app.use("/post", PostRouter);
+
 const generateTokens = function(username){
     const accessToken = jwt.sign({username}, ACCESS_TOKEN_SECRET_KEY, {expiresIn: "15m"});
     const refreshToken = jwt.sign({username}, REFRESH_TOKEN_SECRET_KEY, {expiresIn: "7d"});
     return {accessToken, refreshToken};
 };
 
-app.get("/", authMiddleware, (req, res) => {
+app.get("/", (req, res) => {
     res.status(200).json({message: "Healthy."});
 });
 
@@ -89,7 +100,7 @@ app.post("/log-in",  async (req, res) => {
         const {accessToken, refreshToken} = generateTokens(user.username);
         user.refreshToken = refreshToken;
         await user.save();
-        res.status(200).json({message: "Successfully logged in.", accessToken, refreshToken});
+        res.status(200).json({message: "Successfully logged in.", username: user.username, accessToken, refreshToken});
     } catch (error) {
         console.error("Error logging in.\n", error);
         res.status(500).json({message: "Internal Server Error."});

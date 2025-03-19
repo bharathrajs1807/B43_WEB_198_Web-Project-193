@@ -7,12 +7,12 @@ const PostSchema = mongoose.Schema({
         required: true
     },
     likes: {
-        type: Number,
-        default: 0
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "User"
     },
     dislikes: {
-        type: Number,
-        default: 0
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "User"
     },
     comments: [{
         userId: {
@@ -28,6 +28,11 @@ const PostSchema = mongoose.Schema({
     createdAt: {
         type: Date,
         default: new Date()
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true
     }
 });
 

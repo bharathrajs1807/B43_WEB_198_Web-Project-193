@@ -1,0 +1,119 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f4f4f4;
+    font-size: 16px;
+}
+
+.container {
+    width: 100%;
+    max-width: 62.5rem;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin: 1rem;
+}
+
+h1 {
+    margin-bottom: 1.25rem;
+}
+
+form {
+    width: 100%;
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+}
+
+.form-group {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    flex: 1;
+    min-width: 13.75rem;
+}
+
+label {
+    font-weight: bold;
+    width: 7.5rem;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 0.75rem;
+    margin: 0.3125rem 0;
+    border-radius: 0.25rem;
+    border: 0.0625rem solid #ddd;
+    font-size: 1rem;
+}
+
+textarea {
+    height: 6.25rem;
+    resize: vertical;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 1.25rem;
+    gap: 1.25rem;
+}
+
+button {
+    padding: 0.75rem 1.25rem;
+    border: none;
+    background-color: #007BFF;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 0.25rem;
+    width: 50%;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+@media (max-width: 48rem) {
+    .form-row {
+        flex-direction: column;
+    }
+
+    .form-group {
+        margin-bottom: 0.9375rem;
+    }
+
+    .container {
+        width: 90%;
+    }
+
+    input, select, textarea, button {
+        font-size: 0.875rem;
+    }
+
+    .button-container {
+        justify-content: center;
+    }
+
+    button {
+        width: 100%;
+    }
+}
