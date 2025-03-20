@@ -23,6 +23,9 @@ const getProfile = async (req, res) => {
 const updateProfile = async (req, res) => {
     try {
         const username = req.params.username;
+        if(username!==req.user){
+            return res.status(404).json({message: "Not authorized."});
+        }
         const user = await User.findOne({username});
         if(!user){
             return res.status(404).json({message: "User not found."});
@@ -41,6 +44,9 @@ const updateProfile = async (req, res) => {
 const addFollowing = async (req, res) => {
     try {
         const username = req.params.username;
+        if(username!==req.user){
+            return res.status(404).json({message: "Not authorized."});
+        }
         const user = await User.findOne({username});
         if(!user){
             return res.status(404).json({message: "User not found."});
@@ -69,6 +75,9 @@ const addFollowing = async (req, res) => {
 const removeFollowing = async (req, res) => {
     try {
         const username = req.params.username;
+        if(username!==req.user){
+            return res.status(404).json({message: "Not authorized."});
+        }
         const user = await User.findOne({username});
         if(!user){
             return res.status(404).json({message: "User not found."});
@@ -97,6 +106,9 @@ const removeFollowing = async (req, res) => {
 const addClub = async (req, res) => {
     try {
         const username = req.params.username;
+        if(username!==req.user){
+            return res.status(404).json({message: "Not authorized."});
+        }
         const user = await User.findOne({username: username});
         if(!user){
             return res.status(404).json({message: "User not found."});
@@ -125,6 +137,9 @@ const addClub = async (req, res) => {
 const removeClub = async (req, res) => {
     try {
         const username = req.params.username;
+        if(username!==req.user){
+            return res.status(404).json({message: "Not authorized."});
+        }
         const user = await User.findOne({username: username});
         if(!user){
             return res.status(404).json({message: "User not found."});

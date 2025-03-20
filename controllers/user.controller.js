@@ -18,6 +18,9 @@ const getUser = async (req, res) => {
 const updateUser = async (req, res) => {
     try {
         const username = req.params.username;
+        if(username!==req.user){
+            return res.status(404).json({message: "Not authorized."});
+        }
         const user = await User.findOne({username});
         if(!user){
             return res.status(404).json({message: "User not found."});
@@ -48,6 +51,9 @@ const updateUser = async (req, res) => {
 const changePassword = async (req, res) => {
     try {
         const username = req.params.username;
+        if(username!==req.user){
+            return res.status(404).json({message: "Not authorized."});
+        }
         const user = await User.findOne({username});
         if(!user){
             return res.status(404).json({message: "User not found."});
@@ -57,6 +63,9 @@ const changePassword = async (req, res) => {
         if(!isMatch){
             return res.status(400).json({message: "Invalid credentials."});
         }
+        if(new_password.length < 8){
+            return res.status(400).json({message: "Password has to be minimum 8 charaters long."});
+        }       
         const hashedPassword = await bcrypt.hash(new_password, 10);
         user.password = hashedPassword;
         await user.save();
