@@ -10,7 +10,7 @@ const getClub = async (req, res) => {
         }
         const {type, description, createdAt, createdBy} = club;
         const username = createdBy.username;
-        res.status(200).json({clubname: club.clubname, type, description, createdAt, username});
+        res.status(200).json({club});
     } catch (error) {
         res.status(500).json({message: "Error getting the club."});
     }
@@ -21,6 +21,9 @@ const createClub = async (req, res) => {
         const {clubname, type, description, username} = req.body;
         if(!clubname || !type || !description || !username){
             return res.status(400).json({message: "clubname, type, description and username must be provided."});
+        }
+        if(username!==req.user){
+            return res.status(404).json({message: "Not authorized."});
         }
         const club = await Club.findOne({clubname});
         if(club){
@@ -34,8 +37,8 @@ const createClub = async (req, res) => {
         if(!user){
             return res.status(404).json({message: "User not found."});
         }
-        await Club.create({clubname, type, description, createdBy: user._id});
-        res.status(200).json({message: "Successfully created a club."});
+        const newClub = await Club.create({clubname, type, description, createdBy: user._id});
+        res.status(201).json({message: "Successfully created a club.", club: newClub});
     } catch (error) {
         res.status(500).json({message: "Error creating the club."});
     }
@@ -46,6 +49,9 @@ const updateClub = async (req, res) => {
         const clubname = req.params.clubname;
         const new_clubname = req.body.clubname;
         const {type, description, username} = req.body;
+        if(username!==req.user){
+            return res.status(404).json({message: "Not authorized."});
+        }
         const club = await Club.findOne({clubname});
         if(!club){
             return res.status(404).json({message: "Club not found."});

@@ -16,6 +16,8 @@
             </div>
 
             <div class="user-actions">
+                <input type="text" id="searchBar" placeholder="Search profiles and clubs..." />
+                <button id="searchBtn" class="search-button">Search</button>
                 <span id="username">Username</span>
                 <button id="logoutBtn" class="logout-button">Logout</button>
             </div>
@@ -23,6 +25,12 @@
     </nav>
 
     <div class="profile-container">
+        <section class="search-results" id="searchResults" style="display:none;">
+            <h2>Search Results</h2>
+            <div id="searchResultsContainer"></div>
+        </section>
+        <br>
+        <br>
         <section class="profile-info">
             <div id="profileDetails">
                 <p><strong>Username:</strong> <span id="profileUsername"></span></p>
@@ -35,6 +43,7 @@
                 <p id="last"><strong>Bio:</strong> <span id="bio"></span></p>
             </div>
             <button id="editBtn">Edit Profile</button>
+            <button id="createClubBtn">Create Club</button>
         </section>
     </div>
 
@@ -48,79 +57,327 @@
 
         </section>
     </div>
-</body>
-</html>
 
-<script>
-    const postBtn = document.getElementById("postBtn");
-    const postsContainer = document.getElementById("postsContainer");
+    <script>
+        const accessToken = localStorage.getItem("accessToken");
+        const refreshToken = localStorage.getItem("refreshToken");
+        const username = localStorage.getItem("username");
 
-    const userId = "12345"; // Replace with actual user ID from session or localStorage
+        const postContent = document.getElementById("postContent");
+        const postBtn = document.getElementById("postBtn");
+        const postsContainer = document.getElementById("postsContainer");
+        const logoutBtn = document.getElementById("logoutBtn");
+        const usernameDisplay = document.getElementById("username");
+        const searchBtn = document.getElementById("searchBtn");
+        const searchBar = document.getElementById("searchBar");
+        const createClubBtn = document.getElementById("createClubBtn");
 
-    // Fetch and display profile details
-    async function fetchProfile() {
-        try {
-            const response = await fetch(`/api/profile/${userId}`);
-            const profile = await response.json();
+        usernameDisplay.textContent = username;
 
-            // Populate profile info
-            document.getElementById("profileUsername").textContent = profile.username;
-            document.getElementById("profileEmail").textContent = profile.email;
+        document.addEventListener("DOMContentLoaded", () => {
+            const logo = document.querySelector(".logo-img");
+            const usernameDisplay = document.getElementById("username");
+
+            logo.addEventListener("click", () => {
+                window.location.href = "wall.html";
+            });
+
+            usernameDisplay.addEventListener("click", () => {
+                window.location.href = `profile.html?username=${username}`;
+            });
+        });
+
+        async function toggleLikeDislike(postId, action) {
+            try {
+                const response = await fetch(`http://localhost:8090/post/${postId}/update-${action}?username=${username}`, {
+                    method: "PATCH",
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ username })
+                });
+
+                if (response.ok) {
+                    fetchPosts();
+                } else {
+                    console.error(`Failed to ${action} post.`);
+                }
+            } catch (error) {
+                console.error(`Error toggling ${action}:`, error);
+            }
+        }
+
+        async function addComment(postId, comment) {
+            try {
+                const response = await fetch(`http://localhost:8090/post/${postId}/add-comment?username=${username}`, {
+                    method: "PATCH",
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ username, comment })
+                });
+
+                if (response.ok) {
+                    fetchPosts();
+                } else {
+                    console.error("Failed to add comment.");
+                }
+            } catch (error) {
+                console.error("Error adding comment:", error);
+            }
+        }
+
+        async function fetchUserProfile() {
+            try {
+                const user_response = await fetch(`http://localhost:8090/user/${username}`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`
+                    }
+                });
+
+                if (user_response.status === 401) {
+                    await refreshAccessToken();
+                } else if (user_response.ok) {
+                    const user = await user_response.json();
+                    const profile_response = await fetch(`http://localhost:8090/profile/${username}`, {
+                        method: "GET",
+                        headers: {
+                            "Authorization": `Bearer ${accessToken}`
+                        }
+                    });
+
+                    if (profile_response.status === 401) {
+                        await refreshAccessToken();
+                    } else if (profile_response.ok) {
+                        const profile = await profile_response.json();
+                        displayUserProfile(user, profile);
+                    } else {
+                        throw new Error("Failed to fetch profile info");
+                    }
+                } else {
+                    throw new Error("Failed to fetch user info");
+                }
+            } catch (error) {
+                console.error("Error fetching user profile:", error);
+            }
+        }
+
+        function displayUserProfile(user, profile) {
+            document.getElementById("profileUsername").textContent = user.username;
+            document.getElementById("profileEmail").textContent = user.email;
             document.getElementById("firstName").textContent = profile.firstName;
             document.getElementById("lastName").textContent = profile.lastName;
             document.getElementById("phoneNumber").textContent = profile.phoneNumber;
             document.getElementById("gender").textContent = profile.gender;
-            document.getElementById("birthday").textContent = new Date(profile.birthday).toLocaleDateString();
+            document.getElementById("birthday").textContent = new Date(profile.birthday).toString();
             document.getElementById("bio").textContent = profile.bio;
-
-            // Display posts
-            displayPosts(profile.posts);
-        } catch (error) {
-            console.error("Error fetching profile:", error);
         }
-    }
 
-    // Display posts
-    function displayPosts(posts) {
-        postsContainer.innerHTML = ''; // Clear previous posts
-        posts.forEach(post => {
-            const postElement = document.createElement("div");
-            postElement.classList.add("post");
-            postElement.innerHTML = `
-            <span class="username">${post.username}</span>
-            <p class="content">${post.content}</p>
-        `;
-            postsContainer.appendChild(postElement);
-        });
-    }
-
-    // Handle posting new content
-    postBtn.addEventListener("click", async () => {
-        const content = prompt("Enter your post content:");
-        if (content) {
+        async function fetchPosts() {
             try {
-                const response = await fetch("/api/posts", {
+                const params = new URLSearchParams(window.location.search);
+                const response = await fetch(`http://localhost:8090/post?username=${params.get("username")}`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`
+                    }
+                });
+
+                if (response.status === 401) {
+                    await refreshAccessToken();
+                } else if (response.ok) {
+                    const data = await response.json();
+                    displayPosts(data);
+                } else {
+                    throw new Error("Failed to fetch posts");
+                }
+            } catch (error) {
+                console.error("Error fetching posts:", error);
+            }
+        }
+
+        async function refreshAccessToken() {
+            try {
+                const response = await fetch("http://localhost:8090/refresh", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({
-                        content,
-                        userId
-                    })
+                    body: JSON.stringify({ refreshToken })
                 });
 
-                const newPost = await response.json();
-                displayPosts([newPost]); // Display the new post
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem("accessToken", data.accessToken);
+                    fetchPosts();
+                } else {
+                    window.location.href = "login.html";
+                }
             } catch (error) {
-                console.error("Error creating post:", error);
+                console.error("Error refreshing access token:", error);
+                window.location.href = "login.html";
             }
         }
-    });
 
-    // Fetch profile when the page loads
-    document.addEventListener("DOMContentLoaded", () => {
-        fetchProfile();
-    });
+        function displayPosts(posts) {
+            postsContainer.innerHTML = "";
+            posts.forEach(post => {
+                const postElement = document.createElement("div");
+                postElement.classList.add("post");
 
-</script>
+                postElement.innerHTML = `
+                    <div class="post-header">
+                        <span class="post-username">${post.createdBy.username}</span>
+                        <span class="post-time">${new Date(post.createdAt).toLocaleString()}</span>
+                    </div>
+                    <div class="post-content">
+                        <p>${post.content}</p>
+                    </div>
+                    <div class="post-actions">
+                        <span class="likes" data-post-id="${post._id}">Likes: ${post.likes.length}</span>
+                        <span class="dislikes" data-post-id="${post._id}">Dislikes: ${post.dislikes.length}</span>
+                    </div>
+                    <div class="comments-section">
+                        <div class="comments">
+                            ${post.comments.map(c => `
+                                <div class="comment">
+                                    <span class="comment-username">${c.userId.username}:</span>
+                                    <span class="comment-text">${c.comment}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <textarea class="comment-input" placeholder="Add a comment..."></textarea>
+                        <button class="add-comment-btn" data-post-id="${post._id}">Comment</button>
+                    </div>
+                `;
+
+                postsContainer.appendChild(postElement);
+            });
+
+            addPostEventListeners();
+        }
+
+        function addPostEventListeners() {
+            document.querySelectorAll(".likes").forEach(likeButton => {
+                likeButton.addEventListener("click", async () => {
+                    const postId = likeButton.getAttribute("data-post-id");
+                    await toggleLikeDislike(postId, 'likes');
+                });
+            });
+
+            document.querySelectorAll(".dislikes").forEach(dislikeButton => {
+                dislikeButton.addEventListener("click", async () => {
+                    const postId = dislikeButton.getAttribute("data-post-id");
+                    await toggleLikeDislike(postId, 'dislikes');
+                });
+            });
+
+            document.querySelectorAll(".add-comment-btn").forEach(button => {
+                button.addEventListener("click", async () => {
+                    const postId = button.getAttribute("data-post-id");
+                    const commentInput = button.previousElementSibling;
+                    const comment = commentInput.value.trim();
+
+                    if (comment) {
+                        await addComment(postId, comment);
+                    }
+                });
+            });
+        }
+
+        searchBtn.addEventListener("click", () => {
+            const query = searchBar.value.trim();
+            if (query) {
+                searchProfilesAndClubs(query);
+            }
+        });
+
+        async function searchProfilesAndClubs(query) {
+            try {
+                const response = await fetch(`http://localhost:8090/search?query=${query}`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    displaySearchResults(data);
+                } else {
+                    console.error("Failed to search profiles and clubs.");
+                }
+            } catch (error) {
+                console.error("Error searching:", error);
+            }
+        }
+
+        function displaySearchResults(data) {
+            const searchResultsContainer = document.getElementById("searchResultsContainer");
+            const searchResultsSection = document.getElementById("searchResults");
+
+            searchResultsContainer.innerHTML = "";
+
+            if (data.users.length > 0 || data.clubs.length > 0) {
+                if (data.users.length > 0) {
+                    const usersList = document.createElement("div");
+                    usersList.innerHTML = "<h3>Users:</h3>";
+                    data.users.forEach(user => {
+                        usersList.innerHTML += `<p><a href="profile.html?username=${user.username}">${user.username}</a></p>`;
+                    });
+                    searchResultsContainer.appendChild(usersList);
+                }
+
+                if (data.clubs.length > 0) {
+                    const clubsList = document.createElement("div");
+                    clubsList.innerHTML = "<h3>Clubs:</h3>";
+                    data.clubs.forEach(club => {
+                        clubsList.innerHTML += `<p><a href="club.html?username=${club.clubname}">${club.clubname}</a></p>`;
+                    });
+                    searchResultsContainer.appendChild(clubsList);
+                }
+            } else {
+                searchResultsContainer.innerHTML = "<p>No results found.</p>";
+            }
+
+            searchResultsSection.style.display = "block";
+        }
+
+        createClubBtn.addEventListener("click", () => {
+            window.location.href = "createClub.html";
+        });
+
+        logoutBtn.addEventListener("click", async () => {
+            try {
+                const response = await fetch("http://localhost:8090/log-out", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ refreshToken })
+                });
+
+                if (response.status === 200) {
+                    localStorage.removeItem("accessToken");
+                    localStorage.removeItem("refreshToken");
+                    localStorage.removeItem("username");
+                    window.location.href = "login.html";
+                } else {
+                    throw new Error("Failed to logout.");
+                }
+            } catch (error) {
+                console.error("Error logging out:", error);
+            }
+        });
+
+        window.onload = async () => {
+            await fetchUserProfile();
+            await fetchPosts();
+        };
+    </script>
+</body>
+
+</html>

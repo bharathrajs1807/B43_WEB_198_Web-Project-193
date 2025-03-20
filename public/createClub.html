@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Club</title>
+    <link rel="stylesheet" href="createClub.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="logo">
+                <img src="./Images/ClubNexus.png" alt="Logo" class="logo-img">
+            </div>
+
+            <div class="user-actions">
+                <span id="usernameDisplay">Username</span>
+                <button id="logoutBtn" class="logout-button">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="create-club-container">
+        <section class="create-club-form">
+            <h2>Create a New Club</h2>
+            <form id="createClubForm">
+                <div class="form-group">
+                    <label for="clubName">Club Name</label>
+                    <input type="text" id="clubName" name="clubName" required>
+                </div>
+                <div class="form-group">
+                    <label for="clubType">Club Type</label>
+                    <select id="clubType" name="clubType" required>
+                        <option value="Book">Book</option>
+                        <option value="Fitness">Fitness</option>
+                        <option value="Technology">Technology</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="clubDescription">Description</label>
+                    <textarea id="clubDescription" name="clubDescription" required></textarea>
+                </div>
+                <button type="submit" id="createClubBtn">Create Club</button>
+            </form>
+        </section>
+    </div>
+</body>
+
+</html>
+
+<script>
+    const accessToken = localStorage.getItem("accessToken");
+    const refreshToken = localStorage.getItem("refreshToken");
+    const username = localStorage.getItem("username");
+
+    const logoutBtn = document.getElementById("logoutBtn");
+    const usernameDisplay = document.getElementById("usernameDisplay");
+    const createClubForm = document.getElementById("createClubForm");
+
+    usernameDisplay.textContent = username;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const logo = document.querySelector(".logo-img");
+        const usernameDisplay = document.getElementById("usernameDisplay");
+
+        logo.addEventListener("click", () => {
+            window.location.href = "wall.html";
+        });
+
+        usernameDisplay.addEventListener("click", () => {
+            window.location.href = "profile.html";
+        });
+    });
+
+    createClubForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const clubname = document.getElementById("clubName").value.replace(/\s/g, "");
+        const type = document.getElementById("clubType").value;
+        const description = document.getElementById("clubDescription").value;
+
+        try {
+            const response = await fetch("http://localhost:8090/club/", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${accessToken}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    clubname,
+                    type,
+                    description,
+                    username
+                })
+            });
+
+            if (response.status === 401) {
+                await refreshAccessToken();
+                return;
+            } else if (response.status === 201) {
+                const result = await response.json();
+                alert("Club created successfully!");
+                window.location.href = `club.html?clubname=${result.club.clubname}`;
+            } else {
+                const error = await response.json();
+                throw new Error(error.message || "Failed to create club.");
+            }
+        } catch (error) {
+            console.error("Error creating club:", error);
+            alert("Error: " + error.message);
+        }
+    });
+
+    async function refreshAccessToken() {
+        if (!refreshToken) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        try {
+            const response = await fetch("http://localhost:8090/refresh", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ refreshToken })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                localStorage.setItem("accessToken", data.accessToken);
+            } else {
+                window.location.href = "login.html";
+            }
+        } catch (error) {
+            console.error("Error refreshing access token:", error);
+            window.location.href = "login.html";
+        }
+    }
+
+    logoutBtn.addEventListener("click", async () => {
+        try {
+            const response = await fetch("http://localhost:8090/log-out", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ refreshToken })
+            });
+
+            if (response.status === 200) {
+                localStorage.removeItem("accessToken");
+                localStorage.removeItem("refreshToken");
+                localStorage.removeItem("username");
+                window.location.href = "login.html";
+            } else {
+                throw new Error("Failed to logout.");
+            }
+        } catch (error) {
+            console.error("Error logging out:", error);
+        }
+    });
+</script>

@@ -1,8 +1,11 @@
 const express = require("express");
 
+const authMiddleware = require("../middlewares/authMiddleware.js");
 const {getPosts, createPost, updatePost, deletePost, updateLikes, updateDislikes, addComment, deleteComment} = require("../controllers/post.controller.js");
 
 const PostRouter = express.Router();
+
+PostRouter.use(authMiddleware);
 
 PostRouter.get("/", getPosts);
 PostRouter.post("/", createPost);

@@ -1,0 +1,139 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    font-size: 1rem;
+}
+
+.navbar {
+    background-color: #007BFF;
+    padding: 0.5rem;
+    color: white;
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo-img {
+    height: 3.75rem;
+    width: auto;
+}
+
+.user-actions {
+    display: flex;
+    align-items: baseline;
+}
+
+#usernameDisplay {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-left: 1.75rem;
+    margin-right: 1.25rem;
+}
+
+.logout-button {
+    background-color: #d9534f;
+    color: white;
+    border: none;
+    padding: 0.625rem 0.9375rem;
+    cursor: pointer;
+    border-radius: 1rem;
+    font-size: 1rem;
+}
+
+.logout-button:hover {
+    background-color: #c9302c;
+}
+
+.create-club-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.create-club-form h2 {
+    font-size: 1.5rem;
+    color: #007BFF;
+    margin-bottom: 1.5rem;
+}
+
+.create-club-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.create-club-form .form-group label {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #333;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.create-club-form .form-group input,
+.create-club-form .form-group textarea,
+.create-club-form .form-group select {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1rem;
+    border-radius: 0.25rem;
+    border: 1px solid #ddd;
+}
+
+.create-club-form .form-group textarea {
+    resize: vertical;
+}
+
+#createClubBtn {
+    padding: 0.75rem 1.25rem;
+    background-color: #28a745;
+    color: white;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    border-radius: 0.25rem;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+#createClubBtn:hover {
+    background-color: #218838;
+}
+
+
+@media (max-width: 48rem) {
+
+    .create-club-container {
+        width: 90%;
+        padding: 1.5rem;
+    }
+
+    .create-club-form h2 {
+        font-size: 1.25rem;
+    }
+
+    .create-club-form .form-group {
+        margin-bottom: 1rem;
+    }
+
+    #createClubBtn {
+        width: 100%;
+    }
+}

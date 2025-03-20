@@ -156,6 +156,69 @@ app.post("/refresh",  async (req, res) => {
     }
 });
 
+app.get("/get-posts",  authMiddleware, async (req, res) => {
+    try {
+        const username = req.user;
+        const user = await User.findOne({username});
+        if(!user){
+            return res.status(404).json({message: "User not found."});
+        }
+        const allPosts = await Post.find({
+            $or: [
+                {createdBy: user._id },
+                {createdBy: {$in: user.followings}},
+                {createdBy: {$in: user.clubs}}
+            ]
+        })
+        .sort({createdAt: 1})
+        .populate("createdBy", "username")
+        .populate("comments.userId", "username");
+        const posts = allPosts.map((post) => {
+            return {
+                _id: post._id,
+                content: post.content,
+                likes: post.likes.length,
+                dislikes: post.dislikes.length,
+                comments: post.comments,
+                createdAt: post.createdAt,
+                createdBy: post.createdBy
+            }
+        });
+        res.status(200).json({posts});
+    } catch (error) {
+        console.error("Error getting posts.\n", error);
+        res.status(500).json({message: "Internal Server Error."});
+    }
+});
+
+app.get("/search", authMiddleware, async (req, res) => {
+    try {
+        const username = req.user;
+        const user = await User.findOne({username});
+        if(!user){
+            return res.status(404).json({message: "User not found."});
+        }
+        const {query} = req.query;
+        if(!query){
+            return res.status(400).json({message: "Query parameter is required."});
+        }
+        const userResults = await User.find({
+            username: {$regex: query, $options: 'i'}
+        }).select("username");
+        const clubResults = await Club.find({
+            clubname: {$regex: query, $options: 'i'}
+        }).select("clubname");
+
+        res.status(200).json({
+            users: userResults,
+            clubs: clubResults
+        });
+    } catch (error) {
+        console.error("Error getting posts.\n", error);
+        res.status(500).json({message: "Internal Server Error."});
+    }
+});
+
 server.listen(PORT, async (err) => {
     if(err){
         console.error("Error connecting to the server.\n", err);
