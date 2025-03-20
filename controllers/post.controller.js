@@ -21,8 +21,11 @@ const getPosts = async (req, res) => {
             }
             const profileWithPosts = await Profile.findById(profile._id).populate({
                 path: "posts",
-                select: "_id content likes dislikes comments createdAt",
-                populate: {path: "comments.userId", select: "username"}
+                select: "_id content likes dislikes comments createdAt createdBy",
+                populate: [
+                    { path: "createdBy", select: "username" },
+                    { path: "comments.userId", select: "username" }
+                ]
             });
             posts = profileWithPosts.posts;
         }
@@ -31,7 +34,14 @@ const getPosts = async (req, res) => {
             if(!club){
                 return res.status(404).json({message: "Club not found."});
             }
-            const clubWithPosts = await Club.findById(club._id).populate("posts", "_id content likes dislikes comments createdAt");
+            const clubWithPosts = await Club.findById(club._id).populate({
+                path: "posts",
+                select: "_id content likes dislikes comments createdAt createdBy",
+                populate: [
+                    { path: "createdBy", select: "username" },
+                    { path: "comments.userId", select: "username" }
+                ]
+            });
             posts = clubWithPosts.posts;
         }
         res.status(200).json(posts);
@@ -43,10 +53,14 @@ const getPosts = async (req, res) => {
 const createPost = async (req, res) => {
     try {
         const {username, clubname} = req.query;
+        if(username!==req.user){
+            return res.status(404).json({message: "Not authorized."});
+        }
         const {content} = req.body;
         if(!content){
             return res.status(400).json({message: "content has to be provided."});
         }
+        let postCreated;
         if(username && !clubname){
             const user = await User.findOne({username});
             if(!user){
@@ -57,6 +71,7 @@ const createPost = async (req, res) => {
                 return res.status(404).json({message: "User profile not found."});
             }
             const post = await Post.create({content, createdBy: user._id});
+            postCreated = await Post.findById(post._id).populate("createdBy", "username").populate("comments.userId", "username");
             profile.posts.push(post._id);
             await profile.save();
         }
@@ -70,13 +85,22 @@ const createPost = async (req, res) => {
                 return res.status(404).json({message: "Club not found."});
             }
             const post = await Post.create({content, createdBy: user._id});
+            postCreated = await Post.findById(post._id).populate("createdBy", "username").populate("comments.userId", "username");
             club.posts.push(post._id);
             await club.save();
         }
         else{
             return res.status(400).json({message: "For personal post username has to be provided. And for club post username and clubname has to be provided."});
         }
-        res.status(201).json({message: "Post successfully created."});
+        const post = {
+            content: postCreated.content,
+            likes: postCreated.likes.length,
+            dislikes: postCreated.dislikes.length,
+            comments: postCreated.comments,
+            createdAt: postCreated.createdAt,
+            createdBy: postCreated.createdBy
+        };
+        res.status(201).json({message: "Post successfully created.", post});
     } catch (error) {
         res.status(500).json({message: "Error creating the post."});
     }
@@ -86,6 +110,9 @@ const updatePost = async (req, res) => {
     try {
         const {postId} = req.params;
         const {username} = req.query;
+        if(username!==req.user){
+            return res.status(404).json({message: "Not authorized."});
+        }
         if(!postId || !username){
             return res.status(400).json({message: "postId and username has to be provided."});
         }
@@ -118,6 +145,9 @@ const deletePost = async (req, res) => {
     try {
         const {postId} = req.params;
         const {username} = req.query;
+        if(username!==req.user){
+            return res.status(404).json({message: "Not authorized."});
+        }
         if(!postId || !username){
             return res.status(400).json({message: "postId and username has to be provided."});
         }
@@ -154,6 +184,9 @@ const updateLikes = async (req, res) => {
     try {
         const {postId} = req.params;
         const {username} = req.query;
+        if(username!==req.user){
+            return res.status(404).json({message: "Not authorized."});
+        }
         if(!postId || !username){
             return res.status(400).json({message: "postId and username must be provided."});
         }
@@ -184,6 +217,9 @@ const updateDislikes = async (req, res) => {
     try {
         const {postId} = req.params;
         const {username} = req.query;
+        if(username!==req.user){
+            return res.status(404).json({message: "Not authorized."});
+        }
         if(!postId || !username){
             return res.status(400).json({message: "postId and username must be provided."});
         }
@@ -214,6 +250,9 @@ const addComment = async (req, res) => {
     try {
         const {postId} = req.params;
         const {username} = req.query;
+        if(username!==req.user){
+            return res.status(404).json({message: "Not authorized."});
+        }
         if(!postId || !username){
             return res.status(400).json({message: "postId and username must be provided."});
         }
@@ -241,6 +280,9 @@ const deleteComment = async (req, res) => {
     try {
         const {postId} = req.params;
         const {username} = req.query;
+        if(username!==req.user){
+            return res.status(404).json({message: "Not authorized."});
+        }
         if(!postId || !username){
             return res.status(400).json({message: "postId and username must be provided."});
         }
