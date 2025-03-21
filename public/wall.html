@@ -63,6 +63,31 @@
             window.location.href = `profile.html?username=${username}`;
         });
 
+        postBtn.addEventListener("click", async () => {
+            const content = postContent.value.trim();
+            if (content) {
+                try {
+                    const response = await fetch(`http://localhost:8090/post?username=${username}`, {
+                        method: "POST",
+                        headers: {
+                            "Authorization": `Bearer ${accessToken}`,
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ content })
+                    });
+
+                    if (response.ok) {
+                        postContent.value = "";
+                        fetchPosts();
+                    } else {
+                        console.error("Failed to create post.");
+                    }
+                } catch (error) {
+                    console.error("Error creating post:", error);
+                }
+            }
+        });
+
         async function toggleLikeDislike(postId, action) {
             try {
                 const response = await fetch(`http://localhost:8090/post/${postId}/update-${action}?username=${username}`, {
@@ -87,7 +112,7 @@
         async function addComment(postId, comment) {
             try {
                 const response = await fetch(`http://localhost:8090/post/${postId}/add-comment?username=${username}`, {
-                    method: "PATCH",  
+                    method: "PATCH",
                     headers: {
                         "Authorization": `Bearer ${accessToken}`,
                         "Content-Type": "application/json"

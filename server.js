@@ -163,11 +163,15 @@ app.get("/get-posts",  authMiddleware, async (req, res) => {
         if(!user){
             return res.status(404).json({message: "User not found."});
         }
+        const profile = await Profile.findOne({userId: user._id});
+        if(!profile){
+            return res.status(404).json({message: "Profile not found."});
+        }
         const allPosts = await Post.find({
             $or: [
                 {createdBy: user._id },
-                {createdBy: {$in: user.followings}},
-                {createdBy: {$in: user.clubs}}
+                {createdBy: {$in: profile.followings}},
+                {createdBy: {$in: profile.clubs}}
             ]
         })
         .sort({createdAt: 1})

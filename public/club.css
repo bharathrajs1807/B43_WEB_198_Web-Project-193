@@ -40,8 +40,9 @@ body {
 }
 
 #username {
-    font-size: 1.125rem;
+    font-size: 1rem;
     font-weight: bold;
+    margin-left: 1.75rem;
     margin-right: 1.25rem;
 }
 
@@ -57,6 +58,75 @@ body {
 
 .logout-button:hover {
     background-color: #c9302c;
+}
+
+#searchBar {
+    padding: 0.5rem;
+    font-size: 1rem;
+    border-radius: 1rem;
+    border: 1px solid #ddd;
+    margin-right: 0.75rem;
+    width: 200px;
+}
+
+.search-button {
+    padding: 0.5rem 1rem;
+    margin-right: 1rem;
+    font-size: 1rem;
+    background-color: white;
+    color: grey;
+    border: 1px solid grey;
+    border-radius: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.search-button:hover {
+    background-color: black;
+    color: white;
+}
+
+.search-results {
+    margin-top: 1.25rem;
+    padding: 1.25rem;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    display: none;
+}
+
+.search-results h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #007BFF;
+}
+
+.search-results a {
+    text-decoration: none;
+    color: #007BFF;
+    font-weight: bold;
+    display: block;
+    padding: 0.5rem 0;
+    transition: color 0.3s;
+}
+
+.search-results a:hover {
+    color: #0056b3;
+}
+
+.search-results .result-item {
+    margin-bottom: 1rem;
+}
+
+.search-results .result-item h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: #007BFF;
+}
+
+.search-results .result-item p {
+    font-size: 1rem;
+    color: #555;
 }
 
 .club-container {
@@ -82,7 +152,7 @@ body {
 
 .wall-container {
     max-width: 50rem;
-    margin: 0 auto;
+    margin: 1.25rem auto;
     padding: 1.25rem;
     background-color: white;
     border-radius: 0.5rem;
@@ -97,12 +167,12 @@ body {
 
 .create-post textarea {
     width: 100%;
-    padding: 0.675rem;
-    font-size: 1rem;
-    text-indent: 0.5rem;
+    padding: 1rem;
+    font-size: 1.125rem;
     border-radius: 0.25rem;
     border: 1px solid #ddd;
     resize: vertical;
+    margin-bottom: 1rem;
 }
 
 button {
@@ -127,31 +197,103 @@ button:hover {
 }
 
 .post {
-    background-color: #f9f9f9;
-    padding: 0.9375rem;
-    margin-bottom: 0.9375rem;
+    background-color: #ffffff;
+    padding: 1rem;
+    margin-bottom: 1.25rem;
     border-radius: 0.5rem;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    border-left: 4px solid #007BFF;
+    position: relative;
 }
 
-.post .username {
+.post .post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.post .post-username {
     font-weight: bold;
     color: #007BFF;
 }
 
-.post .content {
-    margin-top: 0.625rem;
-    font-size: 1rem;
+.post .post-time {
+    font-size: 0.875rem;
+    color: #777;
+}
+
+.post .post-content {
+    margin-top: 0.75rem;
+    font-size: 1.125rem;
     color: #555;
 }
 
+.post-actions {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.post-actions .likes, .post-actions .dislikes {
+    font-size: 1rem;
+    color: #007BFF;
+    cursor: pointer;
+}
+
+.post-actions .likes:hover, .post-actions .dislikes:hover {
+    color: #0056b3;
+}
+
+.comments-section {
+    margin-top: 1.25rem;
+    border-top: 1px solid #ddd;
+    padding-top: 1rem;
+}
+
+.comments {
+    margin-bottom: 1rem;
+}
+
+.comment {
+    background-color: #f1f1f1;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.comment-input {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border-radius: 0.25rem;
+    border: 1px solid #ddd;
+}
+
+.add-comment-btn {
+    background-color: #28a745;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    margin-top: 0.5rem;
+    cursor: pointer;
+}
+
+.add-comment-btn:hover {
+    background-color: #218838;
+}
+
+
 @media (max-width: 48rem) {
-    .club-container,
     .wall-container {
         width: 90%;
     }
 
     button {
         width: 100%;
+    }
+
+    #searchBar {
+        width: 150px;
     }
 }

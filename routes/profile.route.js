@@ -9,8 +9,8 @@ ProfileRouter.use(authMiddleware);
 
 ProfileRouter.get("/:username", getProfile);
 ProfileRouter.patch("/:username", updateProfile);
-ProfileRouter.patch("/:username/add-following", addClub);
-ProfileRouter.patch("/:username/remove-following", removeClub);
+ProfileRouter.patch("/:username/add-following", addFollowing);
+ProfileRouter.patch("/:username/remove-following", removeFollowing);
 ProfileRouter.patch("/:username/add-club", addClub);
 ProfileRouter.patch("/:username/remove-club", removeClub);
 
