@@ -9,12 +9,16 @@ const getProfile = async (req, res) => {
         if(!user){
             return res.status(404).json({message: "User not found."});
         }
-        const profile = await Profile.findOne({userId: user._id});
+        const profile = await Profile.findOne({userId: user._id})
+        .populate("followings", "username -_id")
+        .populate("clubs", "clubname -_id");
         if(!profile){
             return res.status(404).json({message: "Profile not found."});
         }
         const {firstName, lastName, phoneNumber, gender, birthday, bio} = profile;
-        res.status(200).json({firstName, lastName, phoneNumber, gender, birthday, bio});
+        const followings = profile.followings;
+        const clubs = profile.clubs;
+        res.status(200).json({firstName, lastName, phoneNumber, gender, birthday, bio, followings, clubs});
     } catch (error) {
         res.status(500).json({message: "Error getting the profile."});
     }

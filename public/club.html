@@ -37,7 +37,7 @@
                 <p><strong>Type:</strong> <span id="clubType"></span></p>
                 <p><strong>Created By:</strong> <span id="clubCreatedBy"></span></p>
             </div>
-            <button id="editClubBtn">Edit Club</button>
+            <button id="followClubBtn">Follow Club</button>
         </section>
     </div>
 
@@ -55,7 +55,7 @@
         const accessToken = localStorage.getItem("accessToken");
         const refreshToken = localStorage.getItem("refreshToken");
         const username = localStorage.getItem("username");
-
+        const followClubBtn = document.getElementById("followClubBtn");
         const postContent = document.getElementById("postContent");
         const postBtn = document.getElementById("postBtn");
         const postsContainer = document.getElementById("postsContainer");
@@ -67,6 +67,8 @@
 
         usernameDisplay.textContent = username;
 
+        let isFollowing = false;
+
         document.addEventListener("DOMContentLoaded", () => {
             const logo = document.querySelector(".logo-img");
             const usernameDisplay = document.getElementById("username");
@@ -76,8 +78,34 @@
             });
 
             usernameDisplay.addEventListener("click", () => {
-                window.location.href = "profile.html";
+                window.location.href = `profile.html?username=${username}`;
             });
+        });
+
+        postBtn.addEventListener("click", async () => {
+            const content = postContent.value.trim();
+            if (content) {
+                try {
+                    const clubname = new URLSearchParams(window.location.search).get("clubname");
+                    const response = await fetch(`http://localhost:8090/post?username=${username}&clubname=${clubname}`, {
+                        method: "POST",
+                        headers: {
+                            "Authorization": `Bearer ${accessToken}`,
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ content })
+                    });
+
+                    if (response.ok) {
+                        postContent.value = "";
+                        fetchPosts();
+                    } else {
+                        console.error("Failed to create post.");
+                    }
+                } catch (error) {
+                    console.error("Error creating post:", error);
+                }
+            }
         });
 
         async function toggleLikeDislike(postId, action) {
@@ -131,7 +159,8 @@
                         "Authorization": `Bearer ${accessToken}`
                     }
                 });
-                const {club} = await response.json();
+                const { club } = await response.json();
+                checkFollowStatus(club.clubname);
                 document.getElementById("clubName").textContent = club.clubname;
                 document.getElementById("clubDescription").textContent = club.description;
                 document.getElementById("clubType").textContent = club.type;
@@ -140,6 +169,78 @@
                 console.error("Error fetching club details:", error);
             }
         }
+
+        async function checkFollowStatus(clubname) {
+            try {
+                const response = await fetch(`http://localhost:8090/profile/${username}`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`
+                    }
+                });
+
+                if (response.status === 401) {
+                    await refreshAccessToken();
+                } else if (response.ok) {
+                    const profile = await response.json();
+                    const isAlreadyFollowing = profile.clubs.some(club => club.clubname===clubname);
+                    if (isAlreadyFollowing) {
+                        isFollowing = true;
+                        followClubBtn.textContent = "Unfollow";
+                    } else {
+                        isFollowing = false;
+                        followClubBtn.textContent = "Follow";
+                    }
+                } else {
+                    throw new Error("Failed to fetch profile info");
+                }
+            } catch (error) {
+                console.error("Error fetching user profile:", error);
+            }
+        }
+
+        followClubBtn.addEventListener("click", async () => {
+            const clubname = new URLSearchParams(window.location.search).get("clubname");
+
+            try {
+                if (isFollowing) {
+                    const response = await fetch(`http://localhost:8090/profile/${username}/remove-club`, {
+                        method: "PATCH",
+                        headers: {
+                            "Authorization": `Bearer ${accessToken}`,
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ clubname })
+                    });
+
+                    if (response.ok) {
+                        isFollowing = false;
+                        followClubBtn.textContent = "Follow";
+                    } else {
+                        console.error("Failed to unfollow club.");
+                    }
+                } else {
+                    const response = await fetch(`http://localhost:8090/profile/${username}/add-club`, {
+                        method: "PATCH",
+                        headers: {
+                            "Authorization": `Bearer ${accessToken}`,
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ clubname })
+                    });
+
+                    if (response.ok) {
+                        isFollowing = true;
+                        followClubBtn.textContent = "Unfollow";
+                    } else {
+                        console.error("Failed to follow club.");
+                    }
+                }
+            } catch (error) {
+                console.error("Error with follow/unfollow:", error);
+            }
+        });
+
 
         async function fetchPosts() {
             try {
