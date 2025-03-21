@@ -82,7 +82,7 @@
         const description = document.getElementById("clubDescription").value;
 
         try {
-            const response = await fetch("http://localhost:8090/club/", {
+            const response = await fetch("https://clubnexus.onrender.com/club/", {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${accessToken}`,
@@ -120,7 +120,7 @@
         }
 
         try {
-            const response = await fetch("http://localhost:8090/refresh", {
+            const response = await fetch("https://clubnexus.onrender.com/refresh", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -142,7 +142,7 @@
 
     logoutBtn.addEventListener("click", async () => {
         try {
-            const response = await fetch("http://localhost:8090/log-out", {
+            const response = await fetch("https://clubnexus.onrender.com/log-out", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

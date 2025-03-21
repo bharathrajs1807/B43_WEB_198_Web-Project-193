@@ -94,7 +94,7 @@
             const content = postContent.value.trim();
             if (content) {
                 try {
-                    const response = await fetch(`http://localhost:8090/post?username=${username}`, {
+                    const response = await fetch(`https://clubnexus.onrender.com/post?username=${username}`, {
                         method: "POST",
                         headers: {
                             "Authorization": `Bearer ${accessToken}`,
@@ -117,7 +117,7 @@
 
         async function toggleLikeDislike(postId, action) {
             try {
-                const response = await fetch(`http://localhost:8090/post/${postId}/update-${action}?username=${username}`, {
+                const response = await fetch(`https://clubnexus.onrender.com/post/${postId}/update-${action}?username=${username}`, {
                     method: "PATCH",
                     headers: {
                         "Authorization": `Bearer ${accessToken}`,
@@ -138,7 +138,7 @@
 
         async function addComment(postId, comment) {
             try {
-                const response = await fetch(`http://localhost:8090/post/${postId}/add-comment?username=${username}`, {
+                const response = await fetch(`https://clubnexus.onrender.com/post/${postId}/add-comment?username=${username}`, {
                     method: "PATCH",
                     headers: {
                         "Authorization": `Bearer ${accessToken}`,
@@ -160,7 +160,7 @@
         async function fetchUserProfile() {
             try {
                 const params = new URLSearchParams(window.location.search);
-                const user_response = await fetch(`http://localhost:8090/user/${params.get("username")}`, {
+                const user_response = await fetch(`https://clubnexus.onrender.com/user/${params.get("username")}`, {
                     method: "GET",
                     headers: {
                         "Authorization": `Bearer ${accessToken}`
@@ -171,7 +171,7 @@
                     await refreshAccessToken();
                 } else if (user_response.ok) {
                     const user = await user_response.json();
-                    const profile_response = await fetch(`http://localhost:8090/profile/${params.get("username")}`, {
+                    const profile_response = await fetch(`https://clubnexus.onrender.com/profile/${params.get("username")}`, {
                         method: "GET",
                         headers: {
                             "Authorization": `Bearer ${accessToken}`
@@ -209,7 +209,7 @@
         async function checkFollowStatus(otherUser) {
             const otheruser = otherUser.username;
             try {
-                const response = await fetch(`http://localhost:8090/profile/${username}`, {
+                const response = await fetch(`https://clubnexus.onrender.com/profile/${username}`, {
                     method: "GET",
                     headers: {
                         "Authorization": `Bearer ${accessToken}`
@@ -242,7 +242,7 @@
 
             try {
                 if (isFollowing) {
-                    const response = await fetch(`http://localhost:8090/profile/${username}/remove-following`, {
+                    const response = await fetch(`https://clubnexus.onrender.com/profile/${username}/remove-following`, {
                         method: "PATCH",
                         headers: {
                             "Authorization": `Bearer ${accessToken}`,
@@ -258,7 +258,7 @@
                         console.error("Failed to unfollow user.");
                     }
                 } else {
-                    const response = await fetch(`http://localhost:8090/profile/${username}/add-following`, {
+                    const response = await fetch(`https://clubnexus.onrender.com/profile/${username}/add-following`, {
                         method: "PATCH",
                         headers: {
                             "Authorization": `Bearer ${accessToken}`,
@@ -282,7 +282,7 @@
         async function fetchPosts() {
             try {
                 const params = new URLSearchParams(window.location.search);
-                const response = await fetch(`http://localhost:8090/post?username=${params.get("username")}`, {
+                const response = await fetch(`https://clubnexus.onrender.com/post?username=${params.get("username")}`, {
                     method: "GET",
                     headers: {
                         "Authorization": `Bearer ${accessToken}`
@@ -304,7 +304,7 @@
 
         async function refreshAccessToken() {
             try {
-                const response = await fetch("http://localhost:8090/refresh", {
+                const response = await fetch("https://clubnexus.onrender.com/refresh", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -400,7 +400,7 @@
 
         async function searchProfilesAndClubs(query) {
             try {
-                const response = await fetch(`http://localhost:8090/search?query=${query}`, {
+                const response = await fetch(`https://clubnexus.onrender.com/search?query=${query}`, {
                     method: "GET",
                     headers: {
                         "Authorization": `Bearer ${accessToken}`
@@ -455,7 +455,7 @@
 
         logoutBtn.addEventListener("click", async () => {
             try {
-                const response = await fetch("http://localhost:8090/log-out", {
+                const response = await fetch("https://clubnexus.onrender.com/log-out", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
