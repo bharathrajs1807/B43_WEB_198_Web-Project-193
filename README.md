@@ -1,6 +1,10 @@
 # ClubNexus
 
+## Introduction
 ClubNexus is a social networking platform for connecting with communities, participating in clubs, and engaging with posts. This application supports user authentication, profile management, club management, and interactive social features like posts, comments, likes, and dislikes.
+
+## Project Type
+Fullstack
 
 ## Deployed App
 - Frontend Deployment link - https://clubnexus.netlify.app/
@@ -16,7 +20,7 @@ ClubNexus is a social networking platform for connecting with communities, parti
 - Like, Dislike, and Comment on Posts
 - Search for Users and Clubs
 
-## Tech Stack
+## Technolog Stack
 - **Backend**: Node.js, Express.js
 - **Database**: MongoDB
 - **Authentication**: JWT (JSON Web Tokens)
@@ -81,7 +85,7 @@ ClubNexus is a social networking platform for connecting with communities, parti
 ### **Search**
 - `GET /search?query=` - Search for users or clubs
 
-## Folder Structure
+## Directory Structure
 ```bash
 clubnexus/
 ├── config/
@@ -107,6 +111,12 @@ clubnexus/
 ├── server.js
 └── package.json
 ```
+
+## Video Walkthrough of the project
+https://drive.google.com/file/d/1j5SyPwxzf13I8HczvTJaOOYfeoeVBJcT/view?usp=drive_link
+
+## Individual Presentation
+https://drive.google.com/file/d/11TMubnoh_v1foKJPjEv8M-DnjL6iwINX/view?usp=drive_link
 
 ---
 
